@@ -68,9 +68,11 @@ Leaf -> Leaf
 
 
 (** list List.fold but for binary trees *)
-(* let rec fold a = *)
 
 
+let rec fold t a f   = match t with
+    Leaf-> a
+    |Node(data,left, right) -> f data (fold  left a f ) (fold right a f )
 (* path *)
 type dir = Left | Right
 
@@ -98,3 +100,60 @@ Leaf -> failwith "fail"
     end 
   end
 end
+
+
+(* A binary search tree *)
+type 'a bst =  ('a -> 'a -> bool) * 'a bt
+
+(** insert the given element into bst *)
+
+
+
+let rec bt_insert a = function
+Leaf -> Node(a , Leaf, Leaf)
+|Node(data, left , right) -> begin
+  if a <= data then
+  Node(data, bt_insert a left, right)
+  else
+  Node(data, left, bt_insert a right)
+end
+   
+let bst_insert (b: 'a bst) (a : 'a ) : 'a bst = 
+    match b with
+    |(f, bst) -> (f, bt_insert a bst)
+  
+
+(** does the bst contain an element equal to the given one? *)
+
+let bst_contains (b: 'a bst) a = match b with
+(f, bt) -> contains bt a
+
+(** delete the first occurrence of given element; fail if it
+doesn't exist *)
+let rec delete a = function 
+Leaf -> failwith "Can not delete from empty binary search tree"
+|Node(data, left, right) -> begin
+  if data =a then
+  Leaf
+  else
+  Node(data, delete a left, delete a right)
+  end
+let bst_delete (b: 'a bst) a : 'a bst = 
+  match b with
+  (f, bt) ->(f, delete a bt)
+
+  (* sort a list with knowledege from bst *)
+  let rec insert_list a = function
+  [] -> [a]
+  |h::t -> begin 
+    if a <= h then
+    a :: h :: t
+    else 
+    h :: insert_list a t
+  end
+
+  let rec sort = function
+  [] -> []
+  | h::t -> begin
+    insert_list h (sort t)
+  end
