@@ -157,3 +157,5 @@ let bst_delete (b: 'a bst) a : 'a bst =
   | h::t -> begin
     insert_list h (sort t)
   end
+
+  let (a_bst : 'a bst) = ((fun a b->a<=b), Node(6 , Node(4, Leaf,Leaf),Node (9, Leaf, Leaf)))
